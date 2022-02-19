@@ -1,1 +1,4 @@
 cpp/a.out
+*.o
+cpp/cheshire_inherit/main
+*.swp
