@@ -3,6 +3,7 @@
 #include "base.h"
 #include "nice_child.h"
 #include "bad_child.h"
+#include "worst_child.h"
 
 using namespace std;
 
@@ -87,6 +88,22 @@ template<class T> void inspectNear(T* ptr, int count=8) {
     printf("\n");
 }
 
+void stressTest() {
+    // If linker doesn't interfere, this may cause a crash.
+    Base* base = new Base;
+    WorstChild* wc = new WorstChild; // This may cause a crash
+
+    printf("Initial:\n");
+    inspectNear<Base>(base, 64);
+
+    // Switch
+    base->switchUp();
+    wc->switchUp();
+
+    printf("All switched:\n");
+    inspectNear<Base>(base, 64);
+}
+
 int main() {
     //oldTest()
 
@@ -114,6 +131,15 @@ int main() {
 
     I will also note that since switchUp is not virtual, there is no pointer to
     it visible in the memory dump.
+    */
+
+    // Now let's really test how much is compiled vs. determined by linker
+    stressTest();
+
+    /*
+    RESULT: No crash, but valgrind reports invalid writes during the
+    construction of WorstChild, not to mention the invalid reads during the
+    memory dump.
     */
 
     return EXIT_SUCCESS;
